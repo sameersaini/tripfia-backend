@@ -1,15 +1,17 @@
 const express = require('express')
-const { CommentModel } = require('./models/comments');
 const PostsModel = require('./models/posts');
 const mongoose = require('mongoose');
 const app = express()
 const cors = require('cors')
+const getEnvData = require("./env");
 const port = 3001
 
+const envData = getEnvData(process.env.ENV);
+
 // Connection URI
-const uri = "mongodb://localhost:27017/tripfia";
+const uri = envData.mongo.url;
 mongoose.connect(uri).then(() => {
-    console.log('mongo connected');
+    console.log('mongo connected -> ' + uri);
     app.listen(port, function () {
         console.log('express server started');
     })
