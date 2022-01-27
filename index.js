@@ -19,6 +19,11 @@ mongoose.connect(uri).then(() => {
 app.use(express.json())
 app.use(cors())
 
+app.get('/', async (req, res) => {
+    res.json("success");
+});
+
+
 app.get('/post/:postType/:postId', async (req, res) => {
     const { postType, postId } = req.params;
     try {
