@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const app = express()
 const cors = require('cors')
 const getEnvData = require("./env");
+const CountriesModel = require("./models/itinerary/country");
 const port = 3001
 
 const envData = getEnvData(process.env.ENV);
@@ -77,4 +78,103 @@ app.put('/unlike/:postType/:postId', async (req, res) => {
         console.log('returning error', e)
         res.json(e)
     }
+})
+
+app.put('/like/:commentId/:postType/:postId', async (req, res) => {
+    const { userId } = req.body;
+    const { commentId, postType, postId } = req.params;
+    try {
+        const post = await PostsModel
+            .findOne({ postType, postId });
+
+        post.comments = post.comments.map(comment => {
+            if(comment._id.equals(commentId)) {
+                comment.likes.push({ userId })
+            }
+            return comment;
+        })
+        const updatedPost = await post.save();
+        res.json(updatedPost);
+    } catch (e) {
+        console.log('returning error', e)
+        res.json(e)
+    }
+})
+
+app.put('/unlike/:commentId/:postType/:postId', async (req, res) => {
+    const { commentId, postType, postId } = req.params;
+    const { userId } = req.body;
+    try {
+        const post = await PostsModel
+            .findOne({ postType, postId });
+
+        post.comments = post.comments.map(comment => {
+            if(comment._id.equals(commentId)) {
+                comment.likes = comment.likes.filter(like => like.userId !== userId);
+            }
+            return comment;
+        })
+        const updatedPost = await post.save();
+        res.json(updatedPost);
+    } catch (e) {
+        console.log('returning error', e)
+        res.json(e)
+    }
+})
+
+
+app.get('/itinerary/countries', async (req, res) => {
+    try {
+        const countries = await CountriesModel
+            .find({});
+        res.json(countries);
+    } catch (e) {
+        console.log('returning error', e)
+        res.json(e)
+    }
+})
+
+app.get('/itinerary/country/:country/states', (req, res) => {
+    res.json([
+        {
+            id: 1,
+            name: 'India'
+        }
+    ])
+})
+
+app.get('/itinerary/country/:countryId/state/:states/source', (req, res) => {
+    res.json([
+        {
+            id: 1,
+            name: 'India'
+        }
+    ])
+})
+
+app.get('/itinerary/country/:countryId/state/:states/destination', (req, res) => {
+    res.json([
+        {
+            id: 1,
+            name: 'India'
+        }
+    ])
+})
+
+app.get('/itinerary/travel-duration', (req, res) => {
+    res.json([
+        {
+            id: 1,
+            name: 'India'
+        }
+    ])
+})
+
+app.get('/itinerary/travel-type', (req, res) => {
+    res.json([
+        {
+            id: 1,
+            name: 'India'
+        }
+    ])
 })

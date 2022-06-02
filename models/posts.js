@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { Comment } = require('./comments');
-const { Like } = require('./comments');
+const { Like } = require('./likes');
 
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
