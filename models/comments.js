@@ -8,6 +8,7 @@ const Comment = new Schema({
     id: ObjectId,
     text: String,
     userName: String,
+    userId: String,
     profileImage: String,
     likes: { type: [Like], default: [] },
 }, {

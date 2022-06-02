@@ -36,13 +36,29 @@ app.get('/post/:postType/:postId', async (req, res) => {
 });
 
 app.put('/comment/:postType/:postId', async (req, res) => {
-    const { text, userName, profileImage } = req.body;
+    const { text, userName, profileImage, userId } = req.body;
     const { postType, postId } = req.params;
     try {
         const updatedPost = await PostsModel
             .findOneAndUpdate({ postType, postId },
-                { $push: {comments: { text, userName, profileImage }}},
+                { $push: {comments: { text, userName, profileImage, userId }}},
                 {safe: true, upsert: true, new: true});
+        res.json(updatedPost);
+    } catch (e) {
+        console.log('returning error', e)
+        res.json(e)
+    }
+})
+
+app.delete('/comment/:postType/:postId/:commentId', async (req, res) => {
+    const { postType, postId, commentId } = req.params;
+    try {
+        const post = await PostsModel
+            .findOne({ postType, postId });
+
+        post.comments = post.comments.filter(comment => !comment._id.equals(commentId))
+        const updatedPost = await post.save();
+
         res.json(updatedPost);
     } catch (e) {
         console.log('returning error', e)
