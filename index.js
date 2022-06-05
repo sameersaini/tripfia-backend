@@ -50,6 +50,27 @@ app.put('/comment/:postType/:postId', async (req, res) => {
     }
 })
 
+app.put('/comment/edit/:postType/:postId/:commentId', async (req, res) => {
+    const { commentText } = req.body;
+    const { postType, postId, commentId } = req.params;
+    try {
+        const post = await PostsModel
+            .findOne({ postType, postId });
+
+        post.comments = post.comments.map(comment => {
+            if(comment._id.equals(commentId)) {
+                comment.text = commentText;
+            }
+            return comment;
+        })
+        const updatedPost = await post.save();
+        res.json(updatedPost);
+    } catch (e) {
+        console.log('returning error', e)
+        res.json(e)
+    }
+})
+
 app.delete('/comment/:postType/:postId/:commentId', async (req, res) => {
     const { postType, postId, commentId } = req.params;
     try {
